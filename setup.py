@@ -37,7 +37,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="pxdesign",
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     version="0.1.0",
     description="PXDesign: a Fast, Modular, and Accurate Model For De Novo Protein Binder Design",
     long_description=long_description,

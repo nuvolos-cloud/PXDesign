@@ -241,7 +241,7 @@ PYTORCH_CHECK
 # ----------------------------------------------------------
 
 echo ">>> Installing Protenix"
-pip install --no-cache-dir "git+https://github.com/bytedance/Protenix.git@v0.5.0+pxd" \
+pip install --no-cache-dir "protenix>=1.0.5<1.1.0" \
   || { echo "Error: failed to install Protenix."; exit 1; }
 
 echo ">>> Installing PXDesignBench base dependencies"

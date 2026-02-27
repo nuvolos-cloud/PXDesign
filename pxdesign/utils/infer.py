@@ -25,7 +25,7 @@ from typing import Iterable
 import torch
 from ml_collections.config_dict import ConfigDict
 from protenix.config import parse_configs
-from protenix.data.parser import DistillationMMCIFParser
+from protenix.data.core.parser import DistillationMMCIFParser
 from protenix.utils.file_io import dump_gzip_pickle
 from pxdbench.pxd_configs.eval import eval_configs
 
@@ -36,6 +36,10 @@ from pxdesign.data.utils import pdb_to_cif
 
 URL = {
     "pxdesign_v0.1.0": "https://pxdesign.tos-cn-beijing.volces.com/release_model/pxdesign_v0.1.0.pt",
+    # v1.0.0 models (protenix >= 1.0.5)
+    "protenix_base_default_v1.0.0": "https://protenix.tos-cn-beijing.volces.com/checkpoint/protenix_base_default_v1.0.0.pt",
+    "protenix_base_20250630_v1.0.0": "https://protenix.tos-cn-beijing.volces.com/checkpoint/protenix_base_20250630_v1.0.0.pt",
+    # legacy v0.5.0 models (kept for backward compatibility)
     "protenix_base_default_v0.5.0": "https://pxdesign.tos-cn-beijing.volces.com/release_model/protenix_base_default_v0.5.0.pt",
     "protenix_mini_default_v0.5.0": "https://pxdesign.tos-cn-beijing.volces.com/release_model/protenix_mini_default_v0.5.0.pt",
     "protenix_mini_tmpl_v0.5.0": "https://pxdesign.tos-cn-beijing.volces.com/release_model/protenix_mini_tmpl_v0.5.0.pt",
@@ -118,9 +122,7 @@ def download_inference_cache(configs) -> None:
 
     # download protenix checkpoints
     for model_name in [
-        "protenix_base_default_v0.5.0",
-        "protenix_mini_default_v0.5.0",
-        "protenix_mini_tmpl_v0.5.0",
+        "protenix_base_20250630_v1.0.0",
     ]:
         checkpoint_path = os.path.join(configs.load_checkpoint_dir, f"{model_name}.pt")
         if not os.path.exists(checkpoint_path):

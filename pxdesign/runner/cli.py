@@ -461,7 +461,7 @@ def prepare_msa(yaml_file: str, output_yaml: str | None) -> None:
     import tempfile
 
     import yaml
-    from protenix.data.json_maker import cif_to_input_json
+    from protenix.data.inference.json_maker import cif_to_input_json
     from pxdbench.tools.ptx.ptx_utils import populate_msa_with_cache
 
     from pxdesign.data.utils import pdb_to_cif

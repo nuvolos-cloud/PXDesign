@@ -1,33 +1,41 @@
 #!/usr/bin/env bash
-# download_model_weights.sh
+# download_tool_weights.sh
 #
 # Usage:
-#   bash download_model_weights.sh               # Download into ./tool_weights
-#   bash download_model_weights.sh /path/to/dir  # Custom download root directory
+#   bash download_tool_weights.sh               # Download into /pxdesign (PXDESIGN_ROOT)
+#   PXDESIGN_ROOT=/my/path bash download_tool_weights.sh
+#   bash download_tool_weights.sh /path/to/dir  # Explicit root override
 #
 # The final directory structure will look like:
-#   MODELS_ROOT/
-#     af2/
-#       params_model_{1..5}.npz
-#       params_model_{1..5}_ptm.npz
-#       params_model_{1..5}_multimer_v3.npz
-#       LICENSE
-#     mpnn/
-#       ca_model_weights/
-#       soluble_model_weights/
-#       vanilla_model_weights/
-#
-# After downloading, update pxdbench/globals.py to point to these locations.
+#   PXDESIGN_ROOT/
+#     tool_weights/
+#       af2/
+#         params_model_{1..5}.npz
+#         params_model_{1..5}_ptm.npz
+#         params_model_{1..5}_multimer_v3.npz
+#         LICENSE
+#       mpnn/
+#         ca_model_weights/
+#         soluble_model_weights/
+#         vanilla_model_weights/
+#     release_data/
+#       ccd_cache/
+#         components.v20240608.cif
+#         components.v20240608.cif.rdkit_mol.pkl
+#         clusters-by-entity-40.txt
 
 set -euo pipefail
 
+# Canonical deployment root: positional arg > PXDESIGN_ROOT env var > /pxdesign
+PXDESIGN_ROOT_DIR="${1:-${PXDESIGN_ROOT:-/pxdesign}}"
+
 # Set root directory for storing all model weights
-MODELS_ROOT="${1:-$(pwd)/tool_weights}"
+MODELS_ROOT="${PXDESIGN_ROOT_DIR}/tool_weights"
 
 AF2_DIR="${MODELS_ROOT}/af2"
 MPNN_DIR="${MODELS_ROOT}/mpnn"
 
-echo "Model root directory: ${MODELS_ROOT}"
+echo "PXDESIGN_ROOT: ${PXDESIGN_ROOT_DIR}"
 mkdir -p "${AF2_DIR}" "${MPNN_DIR}"
 ########################################
 # 1. AlphaFold2 parameters
@@ -88,7 +96,7 @@ echo "  ProteinMPNN weights are ready in: ${MPNN_DIR}"
 ########################################
 echo "==> Downloading CCD cache ..."
 
-CCD_DIR="${1:-$(pwd)/release_data/ccd_cache}"
+CCD_DIR="${PXDESIGN_ROOT_DIR}/release_data/ccd_cache"
 mkdir -p "${CCD_DIR}"
 
 CCD_COMPONENTS_URL="https://pxdesign.tos-cn-beijing.volces.com/release_data/components.v20240608.cif"
@@ -119,6 +127,7 @@ echo "  CCD cache is ready in: ${CCD_DIR}"
 ########################################
 
 echo "==> All downloads completed."
+echo "Deployment root: ${PXDESIGN_ROOT_DIR}"
 echo "Model weight directories:"
 echo "  AF2:      ${AF2_DIR}"
 echo "  MPNN:     ${MPNN_DIR}"

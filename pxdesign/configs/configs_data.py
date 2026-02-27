@@ -16,12 +16,13 @@
 import os
 from pathlib import Path
 
-if "PROTENIX_DATA_ROOT_DIR" not in os.environ:
-    print(f"PROTENIX_DATA_ROOT_DIR not set, will use ./release_data/ccd_cache")
-    main_directory = Path(__file__).resolve().parent.parent.parent
-    DATA_ROOT_DIR = str(main_directory / "release_data" / "ccd_cache")
-else:
+if "PROTENIX_DATA_ROOT_DIR" in os.environ:
     DATA_ROOT_DIR = os.environ["PROTENIX_DATA_ROOT_DIR"]
+else:
+    # Fall back to PXDESIGN_ROOT (default /pxdesign) so paths are correct when
+    # the package is installed into a site-packages directory.
+    _pxdesign_root = Path(os.environ.get("PXDESIGN_ROOT", "/pxdesign"))
+    DATA_ROOT_DIR = str(_pxdesign_root / "release_data" / "ccd_cache")
 
 # Use CCD cache created by scripts/gen_ccd_cache.py priority. (without date in filename)
 # See: docs/prepare_data.md

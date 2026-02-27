@@ -13,18 +13,21 @@
 # limitations under the License.
 
 # pylint: disable=C0114
+import os
 from pathlib import Path
 
 from protenix.config.extend_types import ListValue, RequiredValue
 
-main_directory = Path(__file__).resolve().parent.parent.parent
+# Use PXDESIGN_ROOT (default /pxdesign) so the checkpoint path is correct
+# regardless of where the package is installed.
+_pxdesign_root = Path(os.environ.get("PXDESIGN_ROOT", "/pxdesign"))
 
 inference_configs = {
     "model_name": "pxdesign_v0.1.0",  # inference model selection
     "seeds": ListValue([], dtype=int),
     "dump_dir": "./output",
     "input_json_path": RequiredValue(str),
-    "load_checkpoint_dir": str(main_directory / "release_data/checkpoint"),
+    "load_checkpoint_dir": str(_pxdesign_root / "release_data" / "checkpoint"),
     "num_workers": 16,
     "use_msa": True,
     "use_fast_ln": True,

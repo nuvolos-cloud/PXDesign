@@ -20,14 +20,19 @@ from protenix.config.extend_types import ListValue, RequiredValue
 
 # Use PXDESIGN_ROOT (default /pxdesign) so the checkpoint path is correct
 # regardless of where the package is installed.
+# PXDESIGN_CHECKPOINT_DIR overrides the checkpoint directory specifically,
+# useful when weights are pre-downloaded to a read-only location and a
+# separate writable dir is needed for any additional downloads.
 _pxdesign_root = Path(os.environ.get("PXDESIGN_ROOT", "/pxdesign"))
+_default_checkpoint_dir = str(_pxdesign_root / "release_data" / "checkpoint")
+_checkpoint_dir = os.environ.get("PXDESIGN_CHECKPOINT_DIR", _default_checkpoint_dir)
 
 inference_configs = {
     "model_name": "pxdesign_v0.1.0",  # inference model selection
     "seeds": ListValue([], dtype=int),
     "dump_dir": "./output",
     "input_json_path": RequiredValue(str),
-    "load_checkpoint_dir": str(_pxdesign_root / "release_data" / "checkpoint"),
+    "load_checkpoint_dir": _checkpoint_dir,
     "num_workers": 16,
     "use_msa": True,
     "use_fast_ln": True,

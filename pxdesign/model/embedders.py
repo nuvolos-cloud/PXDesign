@@ -69,7 +69,15 @@ class InputFeatureEmbedder(nn.Module):
         """
         # Embed per-atom features.
         a, _, _, _ = self.atom_attention_encoder(
-            input_feature_dict=input_feature_dict,
+            input_feature_dict["atom_to_token_idx"],
+            input_feature_dict["ref_pos"],
+            input_feature_dict["ref_charge"],
+            input_feature_dict["ref_mask"],
+            input_feature_dict["ref_atom_name_chars"],
+            input_feature_dict["ref_element"],
+            input_feature_dict["d_lm"],
+            input_feature_dict["v_lm"],
+            input_feature_dict["pad_info"],
             inplace_safe=inplace_safe,
             chunk_size=chunk_size,
         )  # [..., N_token, c_token]

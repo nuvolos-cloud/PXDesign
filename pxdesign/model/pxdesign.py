@@ -18,6 +18,7 @@ import torch
 import torch.nn as nn
 from protenix.model.generator import InferenceNoiseScheduler
 from protenix.model.modules.diffusion import DiffusionModule
+from protenix.model.protenix import update_input_feature_dict
 from protenix.utils.logger import get_logger
 from protenix.utils.torch_utils import autocasting_disable_decorator
 
@@ -126,6 +127,9 @@ class ProtenixDesign(nn.Module):
     ) -> tuple[dict[str, torch.Tensor], dict[str, Any], dict[str, Any]]:
 
         N_token = input_feature_dict["residue_index"].shape[-1]
+
+        # Compute d_lm, v_lm, pad_info required by AtomAttentionEncoder (new in protenix 1.0.5)
+        input_feature_dict = update_input_feature_dict(input_feature_dict)
 
         pred_dict = {}
         s_inputs, s, z = self.get_condition_embedding(

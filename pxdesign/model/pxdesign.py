@@ -22,7 +22,7 @@ from protenix.model.protenix import update_input_feature_dict
 from protenix.utils.logger import get_logger
 from protenix.utils.torch_utils import autocasting_disable_decorator
 
-from pxdesign.model.embedders import DesignConditionEmbedder
+from pxdesign.model.embedders import DesignConditionEmbedder, RelativePositionEncoding
 from pxdesign.model.generator import sample_diffusion
 
 logger = get_logger(__name__)
@@ -130,6 +130,12 @@ class ProtenixDesign(nn.Module):
 
         # Compute d_lm, v_lm, pad_info required by AtomAttentionEncoder (new in protenix 1.0.5)
         input_feature_dict = update_input_feature_dict(input_feature_dict)
+
+        # Compute relp required by DiffusionConditioning (new in protenix >= 1.1)
+        if "relp" not in input_feature_dict:
+            _relp_cfg = self.configs.model.relative_position_encoding
+            _rpe = RelativePositionEncoding(**_relp_cfg)
+            input_feature_dict = _rpe.generate_relp(input_feature_dict)
 
         pred_dict = {}
         s_inputs, s, z = self.get_condition_embedding(

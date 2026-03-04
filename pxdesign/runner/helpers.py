@@ -653,7 +653,12 @@ def create_target_ptx_json(cif_path, orig_seqs, task_name, dump_dir):
 
     d = cif_to_input_json(cif_path, sample_name=task_name, save_entity_and_asym_id=True)
     if orig_seqs is not None:
-        d = patch_with_orig_seqs([d], orig_seqs, use_template=False)[0]
+        # Exclude "msa" to avoid MSA query/size mismatch when the precomputed MSA
+        # was computed for a cropped sequence but the CIF contains the full sequence.
+        d = patch_with_orig_seqs(
+            [d], orig_seqs, use_template=False,
+            fields=["sequence", "use_msa", "crop", "modifications"]
+        )[0]
     d["sequences"].pop(-1)
 
     os.makedirs(dump_dir, exist_ok=True)

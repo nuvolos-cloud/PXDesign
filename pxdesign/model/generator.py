@@ -95,6 +95,9 @@ def sample_diffusion(
     diffusion_chunk_size: Optional[int] = None,
     inplace_safe: bool = False,
     attn_chunk_size: Optional[int] = None,
+    pair_z: Optional[torch.Tensor] = None,
+    p_lm: Optional[torch.Tensor] = None,
+    c_l: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """Implements Algorithm 18 in AF3.
     It performances denoising steps from time 0 to time T.
@@ -172,6 +175,9 @@ def sample_diffusion(
                 s_inputs=s_inputs,
                 s_trunk=s_trunk,
                 z_trunk=z_trunk,
+                pair_z=pair_z,
+                p_lm=p_lm,
+                c_l=c_l,
                 chunk_size=attn_chunk_size,
                 inplace_safe=inplace_safe,
             )

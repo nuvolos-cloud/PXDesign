@@ -245,6 +245,47 @@ class RelativePositionEncoding(nn.Module):
             "token_index": 1,
         }
 
+    def generate_relp(self, input_feature_dict: dict[str, Any]) -> dict[str, Any]:
+        """Compute the raw relp tensor and store it in input_feature_dict["relp"].
+        Uses only self.r_max and self.s_max (no learned parameters).
+        """
+        with torch.no_grad():
+            asym_id = input_feature_dict["asym_id"]
+            residue_index = input_feature_dict["residue_index"]
+            entity_id = input_feature_dict["entity_id"]
+            token_index = input_feature_dict["token_index"]
+            sym_id = input_feature_dict["sym_id"]
+
+            b_same_chain = (asym_id[..., :, None] == asym_id[..., None, :]).long()
+            b_same_residue = (residue_index[..., :, None] == residue_index[..., None, :]).long()
+            b_same_entity = (entity_id[..., :, None] == entity_id[..., None, :]).long()
+            d_residue = torch.clip(
+                input=residue_index[..., :, None] - residue_index[..., None, :] + self.r_max,
+                min=0,
+                max=2 * self.r_max,
+            ) * b_same_chain + (1 - b_same_chain) * (2 * self.r_max + 1)
+            a_rel_pos = F.one_hot(d_residue, 2 * (self.r_max + 1))
+            d_token = torch.clip(
+                input=token_index[..., :, None] - token_index[..., None, :] + self.r_max,
+                min=0,
+                max=2 * self.r_max,
+            ) * b_same_chain * b_same_residue + (1 - b_same_chain * b_same_residue) * (
+                2 * self.r_max + 1
+            )
+            a_rel_token = F.one_hot(d_token, 2 * (self.r_max + 1))
+            d_chain = torch.clip(
+                input=sym_id[..., :, None] - sym_id[..., None, :] + self.s_max,
+                min=0,
+                max=2 * self.s_max,
+            ) * b_same_entity + (1 - b_same_entity) * (2 * self.s_max + 1)
+            a_rel_chain = F.one_hot(d_chain, 2 * (self.s_max + 1))
+
+            relp = torch.cat(
+                [a_rel_pos, a_rel_token, b_same_entity[..., None], a_rel_chain], dim=-1
+            ).float()
+            input_feature_dict["relp"] = relp
+        return input_feature_dict
+
     def forward(self, input_feature_dict: dict[str, Any]) -> torch.Tensor:
         """
         Args:

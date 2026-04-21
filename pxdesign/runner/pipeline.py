@@ -146,7 +146,7 @@ class DesignPipeline(InferenceRunner):
             if use_target_template:
                 self.configs.eval.binder.tools.ptx.use_template = True
                 self.configs.eval.binder.tools.ptx.model_name = (
-                    "protenix_base_20250630_v1.0.0"
+                    "protenix-v2"
                 )
                 print("[INFO] Use target template in the Protenix filter!")
         else:
@@ -416,9 +416,9 @@ def main(argv=None):
             if use_target_template:
                 runner.configs.eval.binder.tools.ptx.use_template = True
                 runner.configs.eval.binder.tools.ptx.model_name = (
-                    "protenix_base_20250630_v1.0.0"
+                    "protenix-v2"
                 )
-                meta_info["protenix"] = "Protenix-Base-20250630"
+                meta_info["protenix"] = "Protenix-v2"
             else:
                 meta_info["protenix"] = "Protenix"
         if DIST_WRAPPER.rank == 0:

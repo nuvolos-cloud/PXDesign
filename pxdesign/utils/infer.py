@@ -36,6 +36,8 @@ from pxdesign.data.utils import pdb_to_cif
 
 URL = {
     "pxdesign_v0.1.0": "https://pxdesign.tos-cn-beijing.volces.com/release_model/pxdesign_v0.1.0.pt",
+    # v2.0.0 models (protenix >= 2.0.0)
+    "protenix-v2": "https://protenix.tos-cn-beijing.volces.com/checkpoint/protenix-v2.pt",
     # v1.0.0 models (protenix >= 1.0.5)
     "protenix_base_default_v1.0.0": "https://protenix.tos-cn-beijing.volces.com/checkpoint/protenix_base_default_v1.0.0.pt",
     "protenix_base_20250630_v1.0.0": "https://protenix.tos-cn-beijing.volces.com/checkpoint/protenix_base_20250630_v1.0.0.pt",
@@ -122,6 +124,7 @@ def download_inference_cache(configs) -> None:
 
     # download protenix checkpoints
     for model_name in [
+        "protenix-v2",
         "protenix_base_20250630_v1.0.0",
     ]:
         checkpoint_path = os.path.join(configs.load_checkpoint_dir, f"{model_name}.pt")
